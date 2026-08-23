@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import type { BoundingBox } from "./metadata.js";
 import {
   childBoundingBox,
-  childNodeName,
   mortonDecode3,
   mortonEncode3,
 } from "./octree-math.js";
@@ -52,13 +51,6 @@ describe("childBoundingBox", () => {
         (child.max[2] - child.min[2]);
     }
     expect(volume).toBe(1000);
-  });
-});
-
-describe("childNodeName", () => {
-  it("appends the child index to the parent name", () => {
-    expect(childNodeName("r", 0)).toBe("r0");
-    expect(childNodeName("r3", 5)).toBe("r35");
   });
 });
 

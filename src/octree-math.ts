@@ -34,17 +34,6 @@ export function childBoundingBox(
   return { min: [loX, loY, loZ], max: [hiX, hiY, hiZ] };
 }
 
-// Matches the reference loader's `current.name + childIndex` node naming
-// (e.g. "r" -> "r3" -> "r31").
-export function childNodeName(
-  parentName: string,
-  childIndex: ChildIndex,
-): string {
-  return `${parentName}${childIndex}`;
-}
-
-// Standard 10-bit-per-axis "magic bits" interleave: 30-bit output stays a
-// safe 32-bit int, plenty for a 32^3 occupancy grid (see DecoderWorker.js's
 // gridSize=32 density grid) or similar per-node spatial indexing.
 function spreadBits3(value: number): number {
   let x = value & 0x3ff;

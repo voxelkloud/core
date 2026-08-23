@@ -1,7 +1,7 @@
 {
   "name": "@voxelkloud/core",
   "version": "0.1.0",
-  "description": "Shared types, octree math and Potree v2 format schema for voxelkloud.",
+  "description": "The vocabulary every voxelkloud layer speaks: bounding boxes, point attributes, transport and error types, and regular-octree/Morton math. Names no file format.",
   "license": "MIT",
   "keywords": [
     "point-cloud",
