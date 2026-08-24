@@ -28,8 +28,21 @@ export interface PointCloudNode {
   readonly maxZ: number;
   /** THIS NODE'S OWN LAYER, never a subtree total. */
   readonly numPoints: number;
-  /** Octant occupancy. `undefined` while the children are not yet known. */
+  /**
+   * TRI-STATE, and only the first two states are read by the scheduler:
+   * `undefined` while the children are not yet known, `0` for a leaf, and
+   * anything else for "has children — walk `children`".
+   *
+   * On an octree it is also octant occupancy, a bit per slot, which is what
+   * every driver here writes. A format whose nodes are not octants (a tileset
+   * tile has any number of children, in no particular arrangement) sets it to a
+   * non-zero count and leaves the bit meaning behind.
+   */
   readonly childMask: number | undefined;
+  /**
+   * Length 8 on an octree. ANY length elsewhere: the scheduler walks
+   * `children.length` and never assumes eight.
+   */
   readonly children: readonly (PointCloudNode | undefined)[];
   readonly parent: PointCloudNode | undefined;
 }
@@ -77,6 +90,29 @@ export interface PointCloudTreeBase {
   readonly nodeGeometricError?: Float64Array | undefined;
   readonly nodePointSpacing?: Float64Array | undefined;
   readonly nodeBoundingRadius?: Float64Array | undefined;
+  /**
+   * THIS NODE'S OWN LAYER, overriding {@link PointCloudNode.numPoints}, for a
+   * format that does not declare a count until the payload arrives.
+   *
+   * A `tileset.json` declares none: the count lives in the `.pnts` feature
+   * table or the glTF accessor, both of which cost the whole tile. So the
+   * driver seeds a nominal — never 0, or the node is never even fetched — and
+   * writes the true count here once it has decoded one. Nodes are frozen at
+   * expansion, which is exactly why the correction is a side array and not a
+   * mutation.
+   *
+   * `undefined` on every format that declares its counts up front.
+   */
+  readonly nodePointCount?: Float64Array | undefined;
+  /**
+   * 1 where this node's children REPLACE it rather than adding to it.
+   *
+   * Read by the renderer, NEVER by the scheduler: deciding it needs to know
+   * which children are resident on the GPU, and dropping a parent before they
+   * are opens a hole exactly where the picture was about to improve. Per node
+   * rather than per tree because 3D Tiles lets `refine` change partway down.
+   */
+  readonly nodeReplaces?: Uint8Array | undefined;
   /** Format-native default for `targetScreenError`, device px. */
   readonly defaultScreenError?: number | undefined;
 

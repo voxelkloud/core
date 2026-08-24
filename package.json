@@ -1,6 +1,6 @@
 {
   "name": "@voxelkloud/core",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "The vocabulary every voxelkloud layer speaks: bounding boxes, point attributes, transport and error types, and regular-octree/Morton math. Names no file format.",
   "license": "MIT",
   "keywords": [
