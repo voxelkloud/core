@@ -357,6 +357,20 @@ export interface OpenPointsOptions extends PointDataOptions {
    * {@link NodeDecompress}. Ignored by a driver that does not.
    */
   readonly decompress?: NodeDecompress;
+  /**
+   * How many workers the driver may decode on. `false` keeps every decode on
+   * the calling thread.
+   *
+   * A REQUEST, not a guarantee, and a driver that decodes inline ignores it
+   * outright. Where it is honoured the default is `min(4, hardwareConcurrency
+   * - 1)`, and a driver that cannot start a worker — no `Worker` global, a
+   * bundler that emitted no chunk, a Content Security Policy with no
+   * `worker-src` — falls back to decoding inline rather than failing.
+   *
+   * Set it to `false` to measure against the inline path, or where the host
+   * forbids workers and the fallback's own warning is noise.
+   */
+  readonly decodeWorkers?: number | false;
 }
 
 /**
